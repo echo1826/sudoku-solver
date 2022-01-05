@@ -1,5 +1,6 @@
 import React from 'react';
 import SudokuCell from './SudokuCell';
+import axios from 'axios';
 
 export default function SudokuGrid() {
     const [sudokuNumbers, setSudokuNumbers] = React.useState(new Array(81).fill(''));
@@ -15,7 +16,37 @@ export default function SudokuGrid() {
         }
         // console.log(solveString);
         // TODO: Sudoku api call goes here to check if it's solvable and then loop over solved string creating a solved array to be put onto the input values
-        
+        var options = {
+            method: 'POST',
+            url: 'https://solve-sudoku.p.rapidapi.com/',
+            headers: {
+              'content-type': 'application/json',
+              'x-rapidapi-host': 'solve-sudoku.p.rapidapi.com',
+              'x-rapidapi-key': process.env.REACT_APP_API_KEY
+            },
+            data: {
+              puzzle: solveString
+            }
+          };
+          
+          axios.request(options).then(function (response) {
+            // console.log(response.data.solution);
+            if(response.data.solution) {
+                const solvedArray = response.data.solution.split('');
+                // console.log(solvedArray);
+                setSudokuNumbers(solvedArray);
+            }else {
+                console.log('unsolved fired');
+                
+            }
+          }).catch(function (error) {
+              console.error(error);
+          });
+    }
+
+    function clearBoard(e) {
+        e.preventDefault();
+        setSudokuNumbers(new Array(81).fill(''));
     }
 
     return (
@@ -24,6 +55,7 @@ export default function SudokuGrid() {
                 {[...Array(81)].map((x, i) => <SudokuCell key = {i} setSudokuNumbers={setSudokuNumbers} index={i} sudokuNumbers={sudokuNumbers}/>)}
             </div>
             <button onClick={getInputs}>Solve</button>
+            <button onClick={clearBoard}>Clear Board</button>
         </div>
     );
 }
