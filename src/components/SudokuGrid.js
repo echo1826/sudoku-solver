@@ -13,7 +13,9 @@ export default function SudokuGrid() {
                 solveString = solveString.concat('.');
             }
         }
-        console.log(solveString);
+        // console.log(solveString);
+        // TODO: Sudoku api call goes here to check if it's solvable and then loop over solved string creating a solved array to be put onto the input values
+        
     }
 
     return (
