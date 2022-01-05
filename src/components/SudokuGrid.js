@@ -4,6 +4,7 @@ import axios from 'axios';
 
 export default function SudokuGrid() {
     const [sudokuNumbers, setSudokuNumbers] = React.useState(new Array(81).fill(''));
+    const [unsolved, setUnsolved] = React.useState(false);
     function getInputs(e) {
         e.preventDefault();
         let solveString = ''
@@ -14,8 +15,6 @@ export default function SudokuGrid() {
                 solveString = solveString.concat('.');
             }
         }
-        // console.log(solveString);
-        // TODO: Sudoku api call goes here to check if it's solvable and then loop over solved string creating a solved array to be put onto the input values
         var options = {
             method: 'POST',
             url: 'https://solve-sudoku.p.rapidapi.com/',
@@ -35,9 +34,10 @@ export default function SudokuGrid() {
                 const solvedArray = response.data.solution.split('');
                 // console.log(solvedArray);
                 setSudokuNumbers(solvedArray);
+                setUnsolved(false);
             }else {
                 console.log('unsolved fired');
-                
+                setUnsolved(true);
             }
           }).catch(function (error) {
               console.error(error);
@@ -56,6 +56,7 @@ export default function SudokuGrid() {
             </div>
             <button onClick={getInputs}>Solve</button>
             <button onClick={clearBoard}>Clear Board</button>
+            {unsolved ? <div>Unsolvable</div> : <React.Fragment></React.Fragment>}
         </div>
     );
 }
